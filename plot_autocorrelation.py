@@ -20,20 +20,20 @@ elif N == 16:
 
 """Plot autocorrelation"""
 
-with h5py.File(f"{file_path_to_simulations}/{num_initialized_spins}_spins_initialized/autocorrelation_{num_real}_reals_{time_units}_time_units.h5", "r") as f:
+with h5py.File(f"{file_path_to_simulations}/autocorrelation_{num_real}_reals_{time_units}_time_units.h5", "r") as f:
     tau = f["tau"][:]
     Cz = f["Cz"][:]
 
 print(f"tau shape: {tau.shape}, Cz shape: {Cz.shape}")
 for i in range(Cz.shape[0]):
-  plt.figure(figsize=(10, 6))
-  plt.plot(tau, Cz[i, :], label=f"{N} spins $C^z-{selected_spins[i]}/{selected_spins[i]}$")
+  plt.figure(figsize=(12, 6))
+  plt.plot(tau, Cz[i, :], label=f"spin {selected_spins[i]}")
   plt.xlabel("Time (s)")
   plt.ylabel(f"$C_{{{selected_spins[i]},{selected_spins[i]}}}$")
   plt.legend()
   plt.ticklabel_format(useOffset=False, style='plain', axis='y')
   plt.legend(loc="upper left", bbox_to_anchor=(1.02, 1), borderaxespad=0)
   plt.grid(True)
+  plt.tight_layout()
   plt.savefig(f"{file_path_to_results}/autocorrelation_{num_real}_reals_{time_units}_time_units_spin{selected_spins[i]}.pdf", dpi=300)
   print(f"Plot saved to {file_path_to_results}/autocorrelation_{num_real}_reals_{time_units}_time_units_spin{selected_spins[i]}.pdf")
-
