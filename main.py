@@ -1,7 +1,6 @@
 import numpy as np
 import h5py
 import os
-#import time
 from tqdm import tqdm  # Add this for progress bar
 from coupling import get_coupling_constants, get_spin_timescale
 from system_parameters import (
@@ -26,8 +25,8 @@ elif N == 16:
     r_vector = r_vector  # Use all spins for 16 spins
 
 time_units = 2000
-num_real = 100
-setting = 3 # 1, 2, or 3
+num_real = 1
+setting = 1 # 1, 2, or 3
 
 if setting == 1:
   choose_coupling_type = "J-coupling"
@@ -42,11 +41,11 @@ else:
   raise ValueError("Please select a valid setting: 1, 2, or 3.")
 
 # File paths
-file_path_to_simulations = f"{current_dir}/simulations/setting_{setting}"
-file_path_to_results = f"{current_dir}/results/setting_{setting}"
+file_path_to_simulations = f"{current_dir}/simulations/{num_initialized_spins}_initialized_spins/setting_{setting}"
+file_path_to_results = f"{current_dir}/results/{num_initialized_spins}_initialized_spins/setting_{setting}"
 
 os.makedirs(file_path_to_simulations, exist_ok=True)  # creates folder if it doesn’t exist
-os.makedirs(file_path_to_comparisons, exist_ok=True)
+os.makedirs(file_path_to_results, exist_ok=True)
 
 class Simulation:
     def __init__(self, coupling_type, shift_type, num_realizations=50):
@@ -122,6 +121,9 @@ class Simulation:
         Simulate and compute autocorrelation of z-component directly.
         Vectorized over lags and uses circular buffer. Matches original buffer logic.
         """
+        
+        # ✅ Ensure the parent directory exists
+        os.makedirs(os.path.dirname(autocorr_path), exist_ok=True)
 
         max_lag = int(max_fraction * self.steps)
         lags_idx = np.arange(0, max_lag + 1, lag_step, dtype=int)
@@ -168,7 +170,7 @@ def main():
     #     autocorr_path=f"simulations/setting_{setting}/spin_{spin_type}/autocorrelation_{num_real}_reals.h5",
     #     lag_step=10, dt=dt)
     sim = Simulation(choose_coupling_type, choose_shift_type, num_real)
-    sim.compute_autocorrelation_directly(f"{file_path_to_simulations}/{num_initialized_spins}_spins_initialized/autocorrelation_{num_real}_reals_{time_units}_time_units.h5", 0.1, 10)
+    sim.compute_autocorrelation_directly(f"{file_path_to_simulations}/autocorrelation_{num_real}_reals_{time_units}_time_units.h5", 0.1, 10)
     os.system('speaker-test -t sine -f 700 -p 10 -l 1')
 
 
